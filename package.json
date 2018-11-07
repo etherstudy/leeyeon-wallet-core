@@ -1,0 +1,33 @@
+{
+  "name": "leeyeon-wallet-core",
+  "version": "0.0.1",
+  "description": "leeyeon wallet core module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/etherstudy/leeyeon-wallet-core.git"
+  },
+  "keywords": [
+    "ethereum",
+    "wallet",
+    "javascript",
+    "web3js"
+  ],
+  "author": "jet lim",
+  "license": "MIT",
+  "dependencies": {
+    "web3": "latest",
+    "keythereum": "latest"
+  },
+  "bugs": {
+    "url": "https://github.com/etherstudy/leeyeon-wallet-core/issues"
+  },
+  "homepage": "https://github.com/etherstudy/leeyeon-wallet-core#readme",
+  "devDependencies": {
+    "webpack": "^4.25.1",
+    "webpack-cli": "^3.1.2"
+  }
+}
