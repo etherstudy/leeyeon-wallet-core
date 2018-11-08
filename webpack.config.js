@@ -1,10 +1,11 @@
-const path            = require('path');
-
 module.exports = {
     entry: {
-        walletCore  : './src/wallet.js'
+        wallet    : './src/wallet.js'
     },
     output: {
-        filename    : '[name].min.js'
-    } 
+        filename  : '[name].min.js'
+    },
+    node: {
+       fs         : "empty"
+    }
 }

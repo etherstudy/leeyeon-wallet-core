@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>ethereum wallet core</title>
-
-    <script src="https://cdn.rawgit.com/ethereum/web3.js/1.0/dist/web3.min.js"></script>
-    <script src="https://cdn.rawgit.com/ethereumjs/keythereum/master/dist/keythereum.min.js"></script>
-    <script src="walletCore.min.js"></script>
-
+    <script src="wallet.min.js"></script>
   </head>
 
   <body>
-
-
+    <script>
+      window.wallet.start(
+        {
+        	"name"   : "ropsten",
+        	"type"   : "http",
+        	"network": {"http"	: "https://ropsten.infura.io",
+        							"wss"		: "wss://ropsten.infura.io/ws",
+        							"api"		: "https://api-ropsten.etherscan.io",
+        							"href"	: "https://ropsten.etherscan.io"},
+          "erc20s" : {"0xdF60Ce3dE7b799Ba695A3F049E03c94f8b70fD6A":["xnt",""]},
+          "erc721s": {}
+        }
+      );
+    </script>
   </body>
 </html>

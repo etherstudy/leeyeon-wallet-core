@@ -1,9 +1,0 @@
-{
-	"name"   : "ropsten",
-	"type"   : "http",
-	"network": {"http"	: "https://ropsten.infura.io",
-				"wss"	: "wss://ropsten.infura.io/ws",
-				"api"	: "https://api-ropsten.etherscan.io",
-				"href"	: "https://ropsten.etherscan.io"},
-	"erc20s" : []
-}

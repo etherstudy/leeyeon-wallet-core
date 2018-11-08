@@ -3,41 +3,47 @@ leeyeon wallet core module
 
 # Install
 ```
+npm install
 npm install --global webpack
 npm install --global webpack-cli
 webpack
 ```
 
-# Setting
-```javascript
-{
-    "name"   : "ropsten",
-    "type"   : "http",
-    "network": {"http"	: "https://ropsten.infura.io",
-                "wss"	: "wss://ropsten.infura.io/ws",
-                "api"	: "https://api-ropsten.etherscan.io",
-                "href"	: "https://ropsten.etherscan.io"},
-    "erc20s" : [["[ADDRESS]","[NAME]","[FULL_NAME]"]]
-}
-```
-https://github.com/etherstudy/leeyeon-wallet-core/blob/master/dist/wallet.json
-
 # Usage
+To use wallet in Node.js, just require it:
 ```javascript
-<script src="https://cdn.rawgit.com/ethereum/web3.js/1.0/dist/web3.min.js"></script>
-<script src="https://cdn.rawgit.com/ethereumjs/keythereum/master/dist/keythereum.min.js"></script>
-<script src="walletCore.min.js"></script>
+var wallet = require("./wallet.js");
 ```
 
-## Create Wallet
+A minified, browserified file dist/wallet.min.js is included for use in the browser. Including this file simply attaches the wallet object to window:
 ```javascript
-window.wallet.create(password,callback);
+<script src="wallet.min.js"></script>
 ```
+
+## Start
+```javascript
+window.wallet.start(    
+    {
+        "name"   : "ropsten",
+        "type"   : "http",
+        "network": {"http"	: "https://ropsten.infura.io",
+                    "wss"	: "wss://ropsten.infura.io/ws",
+                    "api"	: "https://api-ropsten.etherscan.io",
+                    "href"	: "https://ropsten.etherscan.io"},
+        "erc20s" : {"<<ADDRESS>>":["<<NAME>>","<<ICON>>"]},
+        "erc721s": {}
+    }
+);
+```
+
+## Create
+```javascript
+window.wallet.account.create(password,callback=null);
+```
+
 
 ## Login
 ```javascript
-// error is error callback
-// success is success callback
 window.wallet.login(password,keyObject,error,success);
 ```
 
@@ -46,41 +52,18 @@ window.wallet.login(password,keyObject,error,success);
 window.wallet.logout(password,callback);
 ```
 
-## Balance
+## GetBalance
 ```javascript
-// 0x0 is Ethereum
-window.wallet.getBalance(erc20,callback);
-```
-
-## Address QR
-```javascript
-window.wallet.addressQR();
+window.wallet.utils.getBalance(address,erc20,callback=null);
 ```
 
 ## Transfer
 ```javascript
-// 0x0 is Ethereum
-window.wallet.transfer(to,password,erc20,amount,error=null,hash=null,success=null);
+window.wallet.tx.transfer(password,keyObject,to,gasPrice,erc20,weiAmount,error=null,hash=null,success=null);
 ```
 
-## SendTx
-```javascript
-window.wallet.sendTx(to,password,amount,data=null,error=null,hash=null,success=null);
-```
 
-## Get PrivateKey
+## Transaction List
 ```javascript
-window.wallet.getPrivateKeyString(password);
+window.wallet.logs.txlistAll(address,token,callback);
 ```
-
-## Get Transaction History
-```javascript
-window.wallet.txHistory(erc20, callback);
-```
-https://etherscan.io/apis#transactions
-
-## Get Logs
-```javascript
-window.wallet.logs(address,topics,callback);
-```
-https://etherscan.io/apis#logs
