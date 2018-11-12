@@ -1,12 +1,17 @@
 # leeyeon-wallet-core
 leeyeon wallet core module
 
-# Install
+# Build
 ```
 npm install
 npm install --global webpack
 npm install --global webpack-cli
 webpack
+```
+
+# Install npm package from GitHub
+```
+npm install git+https://github.com/etherstudy/leeyeon-wallet-core.git
 ```
 
 # Usage
