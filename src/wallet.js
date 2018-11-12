@@ -69,15 +69,15 @@ window.wallet	= new function() {
   this.account = {
     keyObject:null,
     balances:{},
-    encrypt : function(privateKey,password) {
+    encrypt : function(password,privateKey) {
       return window.wallet.web3.eth.accounts.encrypt(privateKey, password);
     },
-    decrypt : function(keyObject,password) {
+    decrypt : function(password,keyObject) {
       return window.wallet.web3.eth.accounts.decrypt(keyObject, password);
     },
     create : function(password) {
       let entropy = btoa(window.wallet.web3.utils.sha3(Math.random().toString(36).substring(2,15)+Math.random().toString(36).substring(2,15)).substring(2,66));
-      return window.wallet.account.encrypt(window.wallet.web3.eth.accounts.create(entropy).privateKey,password);
+      return window.wallet.account.encrypt(password,window.wallet.web3.eth.accounts.create(entropy).privateKey);
   	},
   	login	: function(password,keyObject,callback=null) {
   		if(!window.wallet.web3) {
@@ -86,7 +86,7 @@ window.wallet	= new function() {
   		} else {
   			try {
   				window.wallet.account.keyObject	= keyObject;
-          window.wallet.account.decrypt(keyObject,password);
+          window.wallet.account.decrypt(password,keyObject);
           window.wallet.utils.getAllBalances(window.wallet.account.address(),0);
   				if(window.wallet.update)
   					window.wallet.update();

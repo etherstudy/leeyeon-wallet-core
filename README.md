@@ -59,7 +59,7 @@ wallet.utils.getBalance(address,token,callback=null);
 
 ## Account
 ```javascript
-wallet.account.decrypt(keyObject,password);
+wallet.account.decrypt(password,keyObject);
 ```
 <img width="722" alt="keyobject2account" src="https://user-images.githubusercontent.com/11692220/48324302-8746ed00-e673-11e8-86f4-ba7bc8fc405e.png">
 
