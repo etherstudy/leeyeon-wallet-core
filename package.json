@@ -20,7 +20,8 @@
   "license": "MIT",
   "dependencies": {
     "web3": "latest",
-    "keythereum": "latest"
+    "msgpack-lite": "latest",
+    "aes-js": "latest"
   },
   "bugs": {
     "url": "https://github.com/etherstudy/leeyeon-wallet-core/issues"
