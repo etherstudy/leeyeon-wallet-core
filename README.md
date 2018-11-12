@@ -42,8 +42,6 @@ wallet.account.create(password);
 ```
 <img width="722" alt="create keyobject" src="https://user-images.githubusercontent.com/11692220/48324290-7b5b2b00-e673-11e8-92ae-c5aae183bf47.png">
 
-<img width="722" alt="keyobject2account" src="https://user-images.githubusercontent.com/11692220/48324302-8746ed00-e673-11e8-86f4-ba7bc8fc405e.png">
-
 ## Login & out
 ```javascript
 wallet.login(password,keyObject,error,success);
@@ -58,6 +56,13 @@ wallet.logout(callback=null);
 wallet.utils.getBalance(address,token,callback=null);
 ```
 <img width="552" alt="getbalance" src="https://user-images.githubusercontent.com/11692220/48202246-ae699a00-e3a7-11e8-8716-d45f9501863a.png">
+
+## Account
+```javascript
+wallet.account.decrypt(keyObject,password);
+```
+<img width="722" alt="keyobject2account" src="https://user-images.githubusercontent.com/11692220/48324302-8746ed00-e673-11e8-86f4-ba7bc8fc405e.png">
+
 
 ## Transfer (Ethereum)
 ```javascript
