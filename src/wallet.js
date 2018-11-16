@@ -299,8 +299,8 @@ window.wallet = {
     QRcode: function (message, size = 256) {
       return '<img src="https://api.qrserver.com/v1/create-qr-code/?data=' + message + '&size=' + size + 'x' + size + ' alt="" width="256" height="' + size + '"/>'
     },
-    linkAddress: function () {
-      return window.wallet.option['network']['href'] + '/address/' + window.wallet.address()
+    linkAddress: function (address) {
+      return window.wallet.option['network']['href'] + '/address/' + address
     },
     linkTX: function (txHash) {
       return window.wallet.option['network']['href'] + '/tx/' + txHash
