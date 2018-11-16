@@ -300,7 +300,7 @@ window.wallet = {
       return '<img src="https://api.qrserver.com/v1/create-qr-code/?data=' + message + '&size=' + size + 'x' + size + ' alt="" width="256" height="' + size + '"/>'
     },
     linkAddress: function (address) {
-      return window.wallet.option['network']['href'] + '/address/' + address
+      return !address ? window.wallet.option['network']['href'] : window.wallet.option['network']['href'] + '/address/' + address
     },
     linkTX: function (txHash) {
       return window.wallet.option['network']['href'] + '/tx/' + txHash
