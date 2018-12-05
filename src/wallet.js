@@ -96,9 +96,7 @@ window.wallet = {
       if (callback) window.wallet.web3.eth.getGasPrice().then(callback)
     },
     send: function (account, to, gasPrice, weiAmount, data = null, err = null, hash = null, success = null) {
-      let tx = { 'from': account.address,
-        'to': to,
-        'value': window.wallet.web3.utils.toHex(weiAmount) }
+      let tx = { 'from': account.address, 'to': to, 'value': window.wallet.web3.utils.toHex(weiAmount) }
       if (data != null) tx['data'] = data
       window.wallet.web3.eth.estimateGas(tx).then((gasLimit) => {
         tx['gasPrice'] = window.wallet.web3.utils.toHex(parseInt(gasPrice))
@@ -247,7 +245,7 @@ window.wallet = {
         }
       }
     },
-    geteABI: function (abi, name) {
+    getABI: function (abi, name) {
       let found = abi.find(obj => { return obj.name === name })
       if (!found) { return null }
       return found
@@ -298,7 +296,7 @@ window.wallet = {
         if (address !== '0x0') {
           window.wallet.web3.eth.subscribe('logs',
             { address: address,
-              topics: [window.wallet.utils.geteABI(window.wallet.contracts[address].a, 'Transfer').signature] },
+              topics: [window.wallet.utils.getABI(window.wallet.contracts[address].a, 'Transfer').signature] },
             (_err, data) => {
               window.wallet.utils.getBalance(window.wallet.account.address(), address)
             })
