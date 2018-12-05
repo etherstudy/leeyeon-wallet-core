@@ -37,44 +37,12 @@ window.wallet = {
     window.wallet.option['erc20s']['0x0'] = ['eth', '<i class="fab fa-ethereum"></i>']
     let delay = 50
     for (let erc20 in option['erc20s']) {
-      window.wallet.utils.contractAdd(ERC20ABI, erc20)
-      if (window.wallet.option['type'] === 'http') {
-        setTimeout(() => {
-          setInterval(() => {
-            window.wallet.utils.getBalance(window.wallet.account.address(), erc20)
-          }, 30000)
-        }, delay)
-        delay += 100
-      } else if (option['type'] === 'wss') {
-        if (erc20 !== '0x0') {
-          window.wallet.web3.eth.subscribe('logs',
-            { address: erc20,
-              topics: [window.wallet.utils.geteABI(window.wallet.contracts[erc20].a, 'Transfer').signature] },
-            (_err, data) => {
-              window.wallet.utils.getBalance(window.wallet.account.address(), erc20)
-            })
-        }
-      }
-      window.wallet.tokenList.push(erc20)
+      window.wallet.utils.tokenAdd(window.wallet.option['type'], ERC20ABI, erc20, delay)
+      delay += 100
     }
     for (let erc721 in option['erc721s']) {
-      window.wallet.utils.contractAdd(ERC721ABI, erc721)
-      if (window.wallet.option['type'] === 'http') {
-        setTimeout(() => {
-          setInterval(() => {
-            window.wallet.utils.getBalance(window.wallet.account.address(), erc721)
-          }, 30000)
-        }, delay)
-        delay += 100
-      } else if (option['type'] === 'wss') {
-        window.wallet.web3.eth.subscribe('logs',
-          { address: erc721,
-            topics: [window.wallet.utils.geteABI(window.wallet.contracts[erc721].a, 'Transfer').signature] },
-          (_err, data) => {
-            window.wallet.utils.getBalance(window.wallet.account.address(), erc721)
-          })
-      }
-      window.wallet.tokenList.push(erc721)
+      window.wallet.utils.tokenAdd(window.wallet.option['type'], ERC721ABI, erc721, delay)
+      delay += 100
     }
     window.wallet.utils.contractCreate()
     console.log('web3 :' + window.wallet.web3.version)
@@ -155,6 +123,15 @@ window.wallet = {
   },
 
   erc20: {
+    add: function (address, symbol) {
+      if (!window.wallet.option['erc20s'][address]) {
+        window.wallet.option['erc20s'][address] = [symbol, '']
+        window.wallet.utils.tokenAdd(window.wallet.option['type'], ERC20ABI, address, 0)
+      }
+    },
+    remove: function (address) {
+      delete window.wallet.option['erc20s'][address]
+    },
     transfer: function (account, erc20, gasPrice, weiAmount, err = null, hash = null, success = null) {
       window.wallet.utils.getBalance(account.address, erc20, (token, balance) => {
         if (balance > weiAmount) {
@@ -172,6 +149,15 @@ window.wallet = {
   },
 
   erc721: {
+    add: function (address, symbol) {
+      if (!window.wallet.option['erc721s'][address]) {
+        window.wallet.option['erc721s'][address] = [symbol, '']
+        window.wallet.utils.tokenAdd(window.wallet.option['type'], ERC721ABI, address, 0)
+      }
+    },
+    remove: function (address) {
+      delete window.wallet.option['erc721s'][address]
+    },
     safeTransferFrom: function (account, erc721, gasPrice, from, to, tokenId, data = null, err = null, hash = null, success = null) {
       if (window.wallet.option['erc721s'][erc721] && data != null) {
         window.wallet.tx.send(account, erc721, gasPrice, 0, window.wallet.contracts[erc721].c.methods.safeTransferFrom(from, to, tokenId, data).encodeABI(), err, hash, success)
@@ -295,6 +281,50 @@ window.wallet = {
     updateBalance: function (token, balance) {
       if (!window.wallet.account.keyObject) return
       window.wallet.account.balances[token] = balance
+    },
+    tokenAdd: function (type, abi, address, delay) {
+      window.wallet.utils.contractAdd(abi, address)
+      if (type === 'http') {
+        setTimeout(() => {
+          setInterval(() => {
+            window.wallet.utils.getBalance(window.wallet.account.address(), address)
+          }, 30000)
+        }, delay)
+      } else if (type === 'wss') {
+        if (address !== '0x0') {
+          window.wallet.web3.eth.subscribe('logs',
+            { address: address,
+              topics: [window.wallet.utils.geteABI(window.wallet.contracts[address].a, 'Transfer').signature] },
+            (_err, data) => {
+              window.wallet.utils.getBalance(window.wallet.account.address(), address)
+            })
+        }
+      }
+      window.wallet.tokenList.push(address)
+    },
+    tokenInfo: function (address, callback = null) {
+      let info = {}
+      if (window.wallet.option['erc20s'][address] || window.wallet.option['erc721s'][address]) {
+        window.wallet.contracts[address].c.methods.totalSupply().call((e, r) => {
+          if (!e) info['totalSupply'] = r
+          window.wallet.contracts[address].c.methods.name().call((e, r) => {
+            if (!e) info['name'] = r
+            window.wallet.contracts[address].c.methods.symbol().call((e, r) => {
+              if (!e) info['symbol'] = r
+              if (window.wallet.contracts[address].c.methods.decimals) {
+                window.wallet.contracts[address].c.methods.decimals().call((e, r) => {
+                  if (!e) info['decimals'] = r
+                  if (callback) callback(info)
+                })
+              } else if (callback) {
+                callback(info)
+              }
+            })
+          })
+        })
+      } else if (callback) {
+        callback(null)
+      }
     },
     QRcode: function (message, size = 256) {
       return '<img src="https://api.qrserver.com/v1/create-qr-code/?data=' + message + '&size=' + size + 'x' + size + ' alt="" width="256" height="' + size + '"/>'
