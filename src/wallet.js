@@ -1,10 +1,9 @@
 const MSGPACK = require('msgpack-lite')
 const AESJS = require('aes-js')
-const ERC20ABI = require('./contracts/abi/erc20abi.js')
-const ERC721ABI = require('./contracts/abi/erc721abi.js')
 
 window.wallet = {
   web3: null,
+  abi: { erc20: require('./contracts/abi/erc20abi.js'), erc721: require('./contracts/abi/erc721abi.js') },
   contracts: {},
   update: null,
   tokenList: [],
@@ -37,11 +36,11 @@ window.wallet = {
     window.wallet.option['erc20s']['0x0'] = ['eth', '<i class="fab fa-ethereum"></i>']
     let delay = 50
     for (let erc20 in option['erc20s']) {
-      window.wallet.utils.tokenAdd(window.wallet.option['type'], ERC20ABI, erc20, delay)
+      window.wallet.utils.tokenAdd(window.wallet.option['type'], window.wallet.abi.erc20, erc20, delay)
       delay += 100
     }
     for (let erc721 in option['erc721s']) {
-      window.wallet.utils.tokenAdd(window.wallet.option['type'], ERC721ABI, erc721, delay)
+      window.wallet.utils.tokenAdd(window.wallet.option['type'], window.wallet.abi.erc721, erc721, delay)
       delay += 100
     }
     window.wallet.utils.contractCreate()
@@ -126,7 +125,7 @@ window.wallet = {
     add: function (address, symbol) {
       if (!window.wallet.option['erc20s'][address]) {
         window.wallet.option['erc20s'][address] = [symbol, '']
-        window.wallet.utils.tokenAdd(window.wallet.option['type'], ERC20ABI, address, 0)
+        window.wallet.utils.tokenAdd(window.wallet.option['type'], window.wallet.abi.erc20, address, 0)
       }
     },
     remove: function (address) {
@@ -152,7 +151,7 @@ window.wallet = {
     add: function (address, symbol) {
       if (!window.wallet.option['erc721s'][address]) {
         window.wallet.option['erc721s'][address] = [symbol, '']
-        window.wallet.utils.tokenAdd(window.wallet.option['type'], ERC721ABI, address, 0)
+        window.wallet.utils.tokenAdd(window.wallet.option['type'], window.wallet.abi.erc721, address, 0)
       }
     },
     remove: function (address) {
@@ -302,29 +301,27 @@ window.wallet = {
       }
       window.wallet.tokenList.push(address)
     },
-    tokenInfo: function (address, callback = null) {
+    tokenInfo: function (abi, address, callback = null) {
       let info = {}
-      if (window.wallet.option['erc20s'][address] || window.wallet.option['erc721s'][address]) {
-        window.wallet.contracts[address].c.methods.totalSupply().call((e, r) => {
-          if (!e) info['totalSupply'] = r
-          window.wallet.contracts[address].c.methods.name().call((e, r) => {
-            if (!e) info['name'] = r
-            window.wallet.contracts[address].c.methods.symbol().call((e, r) => {
-              if (!e) info['symbol'] = r
-              if (window.wallet.contracts[address].c.methods.decimals) {
-                window.wallet.contracts[address].c.methods.decimals().call((e, r) => {
-                  if (!e) info['decimals'] = r
-                  if (callback) callback(info)
-                })
-              } else if (callback) {
-                callback(info)
-              }
-            })
+      let temp = new window.wallet.web3.eth.Contract(abi, address)
+
+      temp.methods.totalSupply().call((e, r) => {
+        if (!e) info['totalSupply'] = r
+        temp.methods.name().call((e, r) => {
+          if (!e) info['name'] = r
+          temp.methods.symbol().call((e, r) => {
+            if (!e) info['symbol'] = r
+            if (temp.methods.decimals) {
+              temp.methods.decimals().call((e, r) => {
+                if (!e) info['decimals'] = r
+                if (callback) callback(info)
+              })
+            } else if (callback) {
+              callback(info)
+            }
           })
         })
-      } else if (callback) {
-        callback(null)
-      }
+      })
     },
     QRcode: function (message, size = 256) {
       return '<img src="https://api.qrserver.com/v1/create-qr-code/?data=' + message + '&size=' + size + 'x' + size + ' alt="" width="256" height="' + size + '"/>'
