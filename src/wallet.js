@@ -111,10 +111,10 @@ window.wallet = {
         })
       })
     },
-    transfer: function (account, to, gasPrice, weiAmount, err = null, hash = null, success = null) {
+    transfer: function (account, to, gasPrice, weiAmount, data = null, err = null, hash = null, success = null) {
       window.wallet.utils.getBalance(account.address, '0x0', (token, balance) => {
         if (balance > weiAmount) {
-          if (token === '0x0') window.wallet.tx.send(account, to, gasPrice, weiAmount, null, err, hash, success)
+          if (token === '0x0') window.wallet.tx.send(account, to, gasPrice, weiAmount, data, err, hash, success)
           else if (err) err('not ethereum')
         } else if (err) err('Out of balance')
       })
@@ -131,11 +131,11 @@ window.wallet = {
     remove: function (address) {
       delete window.wallet.option['erc20s'][address]
     },
-    transfer: function (account, erc20, gasPrice, weiAmount, err = null, hash = null, success = null) {
+    transfer: function (account, erc20, gasPrice, weiAmount, to, err = null, hash = null, success = null) {
       window.wallet.utils.getBalance(account.address, erc20, (token, balance) => {
         if (balance > weiAmount) {
           if (window.wallet.option['erc20s'][token]) {
-            window.wallet.tx.send(account, token, gasPrice, 0, window.wallet.contracts[token].c.methods.transfer(weiAmount).encodeABI(), err, hash, success)
+            window.wallet.tx.send(account, token, gasPrice, 0, window.wallet.contracts[token].c.methods.transfer(to, weiAmount).encodeABI(), err, hash, success)
           } else if (err) err('not erc20')
         } else if (err) err('Out of balance')
       })
@@ -143,6 +143,11 @@ window.wallet = {
     approve: function (account, erc20, gasPrice, weiAmount, spender, err = null, hash = null, success = null) {
       if (window.wallet.option['erc20s'][erc20]) {
         window.wallet.tx.send(account, erc20, gasPrice, 0, window.wallet.contracts[erc20].c.methods.approve(spender, weiAmount).encodeABI(), err, hash, success)
+      } else if (err) err('not erc20')
+    },
+    transferFrom: function (account, erc20, gasPrice, weiAmount, from, to, err = null, hash = null, success = null) {
+      if (window.wallet.option['erc20s'][erc20]) {
+        window.wallet.tx.send(account, erc20, gasPrice, 0, window.wallet.contracts[erc20].c.methods.transferFrom(from, to, weiAmount).encodeABI(), err, hash, success)
       } else if (err) err('not erc20')
     }
   },
